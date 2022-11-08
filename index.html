@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>whatsDown</title>
+<style>
+  ul li{
+    text-decoration: none;
+  }
+  #input{
+    width: 500px;
+    height: 50px;
+  }
+  #button{
+    width: 100px;
+    height: 50px;
+  }
+</style>
+
+</head>
+
+<body>
+    <ul id="messages"></ul>
+    <form id="form" action="">
+        <input type="text" id="input">
+        <button id="button">send</button>
+    </form>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+
+        let socket = io();
+
+        let newUser =  prompt("please enter your name", "user");
+        let messages = document.getElementById("messages");
+        let form = document.getElementById('form');
+        let input = document.getElementById('input');
+
+        form.addEventListener("submit", function(event){
+            event.preventDefault();
+            if(input.value){
+                socket.emit("chat message", input.value , newUser);
+                input.value = "";
+            }
+        });
+
+        socket.emit("connectUser", newUser);
+        
+
+        socket.on("chat message", function(message){
+            let item = document.createElement("li");
+            item.textContent = message;
+            messages.appendChild(item);
+        })
+
+        socket.on("joinUser", function(value){
+            let item = document.createElement("li");
+            item.style.color = "white";
+            item.style.backgroundColor = "green";
+            item.style.paddingLeft = "50px"
+            item.textContent = value;
+            messages.appendChild(item);
+        })
+
+        socket.on("leftUser", function(value){
+            let item = document.createElement("li");
+            item.style.color = "black";
+            item.style.backgroundColor = "red";
+            item.style.paddingLeft = "50px"
+            item.textContent =  value;
+            messages.appendChild(item);
+        })
+
+
+     
+
+    </script>
+</body>
+
+</html>
